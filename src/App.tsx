@@ -1,26 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { questions } from './data/questions';
+import QuestionCard from './components/QuestionCard';
+import ResultCard from './components/ResultCard';
+import { Result } from './types';
 
-function App() {
+const App: React.FC = () => {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [result, setResult] = useState<Result>({ bonobo: 0, porori: 0, nuburi: 0 });
+  const [showResult, setShowResult] = useState(false);
+
+  const handleAnswer = (character: 'bonobo' | 'porori' | 'nuburi') => {
+    setResult(prev => ({ ...prev, [character]: prev[character] + 1 }));
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      setShowResult(true);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="w-full max-w-md p-4">
+          {!showResult ? (
+              <QuestionCard
+                  question={questions[currentQuestion]}
+                  onAnswer={handleAnswer}
+              />
+          ) : (
+              <ResultCard result={result} />
+          )}
+        </div>
+      </div>
   );
-}
+};
 
 export default App;
